@@ -20,13 +20,14 @@ import com.jogamp.opengl.awt.GLCanvas;
 import entity.EntityPlayer;
 import entity.EntityProjectileRegistry;
 import entity.EntityRegistry;
-import entity.IEntity;
 import main.action.PlayerProjectileAction;
 import main.topdata.TopData;
 
 public class Main {
 	
 	private static int count = 0;
+	
+	public static int floorCount = 1;
 	
 	public static boolean gameOver = false;
 	public static int lastDirection = 0;
@@ -201,6 +202,8 @@ public class Main {
 				{
 					EntityRegistry.clearEntities();
 					Map.generate(canvas, 1000);
+					floorCount++;
+					TopData.changeFloorCounter();
 					player.getPosition().setX(Map.spawn_point.getX());
 					player.getPosition().setY(Map.spawn_point.getY());
 					canvas.display();

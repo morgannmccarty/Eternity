@@ -64,7 +64,7 @@ public class Map {
 			spawn_point = new Position(sx, sy);
 			end_point = new Position(ex, ey);
 			
-			if(rand.nextInt(1) == 0 && !lastTown)
+			if(rand.nextInt(5) == 0 && !lastTown)
 			{
 				currentTreeCount = rand.nextInt(MAX_TREE_COUNT);
 				generateTown(canvas, currentTreeCount);

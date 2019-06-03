@@ -26,12 +26,13 @@ public class ProjectileFireball extends AbstractProjectile{
 	@Override
 	public boolean hitEntity() {
 		Random rand = new Random();
-		int damageModified = rand.nextInt(damage)+(damage/2);
+		int damageModified = rand.nextInt(damage/2)+(damage/2);
 		for(int i = 0; i<EntityRegistry.entities.size(); ++i)
 		{
-			if(EntityRegistry.entities.get(i) instanceof IEntityHealable && EntityRegistry.entities.get(i).getPosition().equals(this.getPosition().getPostionAsInt()) && EntityRegistry.entities.get(i) != super.getControllingEntity())
+			if(EntityRegistry.entities.get(i) instanceof IEntityHealable && EntityRegistry.entities.get(i).getPosition().equals(this.getPosition().getPostionAsInt()) && !EntityRegistry.entities.get(i).equals(super.getControllingEntity()))
 			{
 				((IEntityHealable) EntityRegistry.entities.get(i)).changeHealthBy(-damageModified);
+				//EntityRegistry.damagePopup(EntityRegistry.entities.get(i), damageModified);
 				return true;
 			}
 		}

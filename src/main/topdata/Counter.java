@@ -11,6 +11,10 @@ public class Counter extends DisplayText{
 	{
 		super(pos.getX(), pos.getY(), red, green, blue, Integer.toString(count) + " / " + Integer.toString(maxCount));
 	}
+	public Counter(Position pos, int count, String term, float red, float green, float blue)
+	{
+		super(pos.getX(), pos.getY(), red, green, blue, term + ": " + Integer.toString(count));
+	}
 	
 	public void changeCount(int count)
 	{
@@ -20,6 +24,11 @@ public class Counter extends DisplayText{
 	public void changeCount(int count, int maxCount)
 	{
 		changeText(Integer.toString(count) + " / " + Integer.toString(maxCount));
+	}
+	
+	public void changeCount(int count, String term)
+	{
+		changeText(term + ": " + Integer.toString(count));
 	}
 
 }

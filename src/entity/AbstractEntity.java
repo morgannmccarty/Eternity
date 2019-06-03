@@ -21,6 +21,8 @@ public abstract class AbstractEntity implements IEntity{
 		this.blue = blue;
 	}
 	
+	
+	
 	@Override
 	public int getDirectionToEntity(IEntity entity)
 	{

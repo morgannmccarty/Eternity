@@ -24,6 +24,9 @@ public class TopData {
 	public static Tile experienceCount = new Tile(new Position(14, 30), 0.6F, 1.0F, 0.6F, new Type("experience_counter"));
 	public static DisplayText experienceNum = new Counter(new Position(15.5F, 30.3F), Main.player.getExperience(), Main.player.getExperienceReq(), 0.6F, 1.0F, 0.6F);
 	
+	public static DisplayText levelNum = new Counter(new Position(26, 32.3F), Main.player.getLevel(), "Level", 0.0F, 1.0F, 0.1F);
+	public static DisplayText floorNum = new Counter(new Position(26, 30.3F), Main.floorCount, "Floor", 1.0F, 1.0F, 1.0F);
+	
 	public static Board topBoard = new Board(new Tile[][] {{goldCount}, {manaCount}, {healthCount}, {experienceCount}});
 	
 	public static void showTopData(GLCanvas canvas)
@@ -33,6 +36,8 @@ public class TopData {
 		canvas.addGLEventListener(manaNum);
 		canvas.addGLEventListener(healthNum);
 		canvas.addGLEventListener(experienceNum);
+		canvas.addGLEventListener(levelNum);
+		canvas.addGLEventListener(floorNum);
 	}
 	
 	public static void removeData(GLCanvas canvas)
@@ -42,11 +47,23 @@ public class TopData {
 		canvas.removeGLEventListener(manaNum);
 		canvas.removeGLEventListener(healthNum);
 		canvas.removeGLEventListener(experienceNum);
+		canvas.removeGLEventListener(levelNum);
+		canvas.removeGLEventListener(floorNum);
 	}
 	
 	public static void changeGoldCounter()
 	{
 		((Counter) goldNum).changeCount(Main.player.getPlayerGold());
+	}
+	
+	public static void changeFloorCounter()
+	{
+		((Counter) floorNum).changeCount(Main.floorCount, "Floor");
+	}
+	
+	public static void changeLevelCounter()
+	{
+		((Counter) levelNum).changeCount(Main.player.getLevel(), "Level");
 	}
 	
 	public static void changeExperienceCounter()

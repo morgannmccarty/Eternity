@@ -27,6 +27,12 @@ public class DisplayText implements GLEventListener		{
 		this.textToDisplay = s;
 	}
 	
+	public void move(float x, float y)
+	{
+		this.x+=x;
+		this.y+=y;
+	}
+	
 	@SuppressWarnings("static-access")
 	@Override
 	public void display(GLAutoDrawable drawable) {
