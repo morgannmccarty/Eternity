@@ -20,7 +20,7 @@ public class ProjectileFireball extends AbstractProjectile{
 		else if(super.getDirection() == 1) super.move(0, -.5F);
 		else if(super.getDirection() == 2) super.move(.5F, 0);
 		else if(super.getDirection() == 3) super.move(-.5F, 0);
-		hitEntity();
+		if(hitEntity()) EntityRegistry.removeEntity(this);
 	}
 
 	@Override
@@ -32,7 +32,6 @@ public class ProjectileFireball extends AbstractProjectile{
 			if(EntityRegistry.entities.get(i) instanceof IEntityHealable && EntityRegistry.entities.get(i).getPosition().equals(this.getPosition().getPostionAsInt()) && !EntityRegistry.entities.get(i).equals(super.getControllingEntity()))
 			{
 				((IEntityHealable) EntityRegistry.entities.get(i)).changeHealthBy(-damageModified);
-				//EntityRegistry.damagePopup(EntityRegistry.entities.get(i), damageModified);
 				return true;
 			}
 		}

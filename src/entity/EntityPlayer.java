@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import item.ItemStackable;
+import main.Main;
 import main.topdata.TopData;
 import util.Position;
 
@@ -29,7 +30,7 @@ public class EntityPlayer extends AbstractEntityLevelable implements IEntityMagi
 	
 	@Override
 	public void die() {
-		//Main.gameOver = true;
+		Main.gameOver = true;
 	}
 
 	@Override
@@ -56,6 +57,37 @@ public class EntityPlayer extends AbstractEntityLevelable implements IEntityMagi
 		super.setLevel(level);
 		TopData.changeExperienceCounter();
 		TopData.changeLevelCounter();
+	}
+	
+	@Override
+	public void levelUp()
+	{
+		if(super.getExperience() >= this.getExperienceReq())
+		{
+			setLevel(this.getLevel() + 1);
+			levelUp();
+			changeMaxHealthBy(10);
+			changeMaxManaBy(1);
+			changeHealthTo(maxHealth);
+			changeManaTo(maxMana);
+			TopData.changeHealthDisplay();
+			TopData.changeManaDisplay();
+		}
+		
+	}
+	
+	@Override
+	public void changeMaxHealthBy(int ammount)
+	{
+		this.maxHealth += ammount;
+		TopData.changeHealthDisplay();
+	}
+	
+	@Override
+	public void changeMaxManaBy(int ammount)
+	{
+		this.maxMana += ammount;
+		TopData.changeManaDisplay();
 	}
 	
 	@Override

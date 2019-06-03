@@ -80,11 +80,12 @@ public class Main {
 					timer.cancel();
 				}
 				count++;
-				EntityRegistry.entityAttacks();
+				
 				if(count%10 == 0) {
 					
 					EntityRegistry.moveEntities();
 					EntityRegistry.tickEntities();
+					EntityRegistry.entityAttacks();
 					count = 0;
 				}
 				EntityProjectileRegistry.launchProjectiles();

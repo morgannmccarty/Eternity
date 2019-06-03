@@ -99,9 +99,11 @@ public class EntityRegistry {
 	
 	public static void entityAttacks()
 	{
-		Random rand = new Random();
-		int r = rand.nextInt(entities.size());
-		if(entities.get(r) instanceof EntityMage) ((EntityMage)(entities.get(r))).fireFireball();
+		for(int i = 0; i<entities.size(); ++i)
+		{
+			if(entities.get(i) instanceof EntityMage) ((EntityMage)(entities.get(i))).fireFireball();
+			else if(entities.get(i) instanceof EntityRogue) ((EntityRogue)(entities.get(i))).attack();
+		}
 	}
 	
 	public static void removeEntity(IEntity entity)

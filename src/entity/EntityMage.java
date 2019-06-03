@@ -31,6 +31,9 @@ public class EntityMage extends AbstractMonster implements IEntityMagical{
 			
 		}
 	}
+	
+	@Override
+	public void changeMaxManaBy(int ammount) {}
 
 	@Override
 	public void changeManaTo(int ammount) {

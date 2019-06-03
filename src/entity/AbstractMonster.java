@@ -46,6 +46,12 @@ public abstract class AbstractMonster extends AbstractEntityLevelable implements
 	}
 	
 	@Override
+	public void changeMaxHealthBy(int ammount)
+	{
+		this.maxHealth+=ammount;
+	}
+	
+	@Override
 	public void changeHealthBy(int ammount) {
 		this.health += ammount;
 		if(health <= 0) this.die();
