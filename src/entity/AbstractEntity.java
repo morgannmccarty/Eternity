@@ -22,6 +22,16 @@ public abstract class AbstractEntity implements IEntity{
 	}
 	
 	@Override
+	public int getDirectionToEntity(IEntity entity)
+	{
+		return Math.abs(getPosition().getX() - entity.getPosition().getX()) < Math.abs(getPosition().getY() - entity.getPosition().getY()) && (getPosition().getY() - entity.getPosition().getY()) < 0 ? 0 :
+			   Math.abs(getPosition().getX() - entity.getPosition().getX()) < Math.abs(getPosition().getY() - entity.getPosition().getY()) && (getPosition().getY() - entity.getPosition().getY()) < 0 ? 2 :
+			   Math.abs(getPosition().getX() - entity.getPosition().getX()) > Math.abs(getPosition().getY() - entity.getPosition().getY()) && (getPosition().getX() - entity.getPosition().getX()) > 0 ? 1 :
+			   Math.abs(getPosition().getX() - entity.getPosition().getX()) > Math.abs(getPosition().getY() - entity.getPosition().getY()) && (getPosition().getX() - entity.getPosition().getX()) < 0 ? 3 :
+			   4;
+	}
+	
+	@Override
 	public void display(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glColor3f(red, green, blue);
@@ -56,38 +66,47 @@ public abstract class AbstractEntity implements IEntity{
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 	}
 	
+	
+	
 	@Override
 	public void moveUp() {
-		if(pos.getY()+1 >= Library.MAX_POSITION.getY()) return;
+		if(pos.getY() + 1 >= Library.MAX_POSITION.getY()) return;
 		if(!(Map.checkAdjacentTileType(new Type("wall"), 0, 1, pos)) && !(Map.checkAdjacentTileType(new Type("border"), 0, 1, pos)))
 			move(0, 1);
 	}
 
 	@Override
 	public void moveDown() {
-		if(pos.getY()-1 <= Library.MIN_POSITION.getY()) return;
+		if(pos.getY() - 1 <= Library.MIN_POSITION.getY()) return;
 		if(!(Map.checkAdjacentTileType(new Type("wall"), 0, -1, pos)) && !(Map.checkAdjacentTileType(new Type("border"), 0, -1, pos)))
 			move(0, -1);
 	}
 
 	@Override
 	public void moveLeft() {
+		if(pos.getX() - 1 <= Library.MIN_POSITION.getX()) return;
 		if(!(Map.checkAdjacentTileType(new Type("wall"), -1, 0, pos)) && !(Map.checkAdjacentTileType(new Type("border"), -1, 0, pos)))
 			move(-1, 0);
 	}
 
 	@Override
 	public void moveRight() {
+		if(pos.getX() + 1 <= Library.MIN_POSITION.getX()) return;
 		if(!(Map.checkAdjacentTileType(new Type("wall"), 1, 0, pos)) && !(Map.checkAdjacentTileType(new Type("border"), 1, 0, pos)))
 			move(1, 0);
 	}
 	@Override
-	public void move(int x, int y) {
+	public void move(float x, float y) {
 		pos.setX(pos.getX()+x);
 		pos.setY(pos.getY()+y);
 	}
 	@Override
 	public Position getPosition() {
 		return pos;
+	}
+	
+	public void onTick()
+	{
+		
 	}
 }

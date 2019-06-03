@@ -3,6 +3,7 @@ package board;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 
+import entity.EntityProjectileRegistry;
 import entity.EntityRegistry;
 import tile.Tile;
 
@@ -26,6 +27,7 @@ public class Board implements GLEventListener{
 			}
 		}
 		EntityRegistry.drawEntities(drawable);
+		EntityProjectileRegistry.drawProjectiles(drawable);
 	}
 
 	@Override

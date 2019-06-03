@@ -7,6 +7,11 @@ public class Position extends OrderedPair{
 		super(d,e);
 	}
 	
+	public Position(Position pos)
+	{
+		super(pos.getX(), pos.getY());
+	}
+	
 	@Override
 	public boolean equals(Object x)
 	{
@@ -19,5 +24,9 @@ public class Position extends OrderedPair{
 			}
 			else return false;
 		}
+	}
+	public Position getPostionAsInt()
+	{
+		return new Position((int)this.getX(), (int)this.getY());
 	}
 }

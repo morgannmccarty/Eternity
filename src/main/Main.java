@@ -18,14 +18,18 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 
 import entity.EntityPlayer;
+import entity.EntityProjectileRegistry;
 import entity.EntityRegistry;
+import entity.IEntity;
+import main.action.PlayerProjectileAction;
+import main.topdata.TopData;
 
 public class Main {
 	
-	//private static final DateTimeFormatter TIMEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd:H")
+	private static int count = 0;
 	
 	public static boolean gameOver = false;
-	public static String lastDirection = "";
+	public static int lastDirection = 0;
 	public static Timer timer;
 	public static EntityPlayer player = new EntityPlayer(Map.spawn_point, 0, 10, 100);
 
@@ -39,7 +43,6 @@ public class Main {
 		
 		Game game = new Game();
 		
-		
 		canvas.addGLEventListener(game);
 		canvas.addGLEventListener(player);
 		Map.generate(canvas, 1000);
@@ -49,7 +52,6 @@ public class Main {
 		JFrame frame = new JFrame("Eternity");
 		frame.getContentPane().add(canvas, BorderLayout.CENTER);
 		
-		
 		frame.setSize(Game.WIDTH, Game.HEIGHT);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -57,29 +59,39 @@ public class Main {
 		
 		keyBindings(player, frame, canvas);
 		secondUpdate(canvas);
-		EntityRegistry.createEntities();
-	   
-		frame.getRootPane().requestFocusInWindow();
 		
-
+		frame.getRootPane().requestFocusInWindow();
 		
 		Library.LOGGER.log(Level.INFO, "Game started!");
 	}
 	
 	public static void secondUpdate(GLCanvas canvas)
 	{
+		timer = new Timer();
 		TimerTask task = new TimerTask() {
 
 			@Override
 			public void run() {
-				EntityRegistry.moveEntities();
-				System.out.println("test");
+				if(gameOver)
+				{
+					EntityRegistry.clearEntities();
+					Map.gameOver(canvas);
+					timer.cancel();
+				}
+				count++;
+				EntityRegistry.entityAttacks();
+				if(count%10 == 0) {
+					
+					EntityRegistry.moveEntities();
+					EntityRegistry.tickEntities();
+					count = 0;
+				}
+				EntityProjectileRegistry.launchProjectiles();
 				canvas.display();
 			}
 			
 		};
-		timer = new Timer();
-		timer.scheduleAtFixedRate(task, 0, 1000);
+		timer.scheduleAtFixedRate(task, 0, 100);
 	}
 	
 	@SuppressWarnings("serial")
@@ -94,6 +106,12 @@ public class Main {
 		im.put(KeyStroke.getKeyStroke("LEFT"), "moveleft");
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0), "breakWall");
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_N, 0), "reset");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0), "fireballup");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0), "fireballdown");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0), "fireballleft");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0), "fireballright");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "slash");
+		
 		am.put("moveup", new AbstractAction(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -105,8 +123,8 @@ public class Main {
 				}
 				
 				canvas.display();
-				System.out.println("up");
-				lastDirection = "up";
+				//System.out.println("up");
+				lastDirection = 0;
 			}
 			
 		});
@@ -121,8 +139,8 @@ public class Main {
 				}
 					
 				canvas.display();
-				System.out.println("down");
-				lastDirection = "down";
+				//System.out.println("down");
+				lastDirection = 1;
 			}
 			
 		});
@@ -137,10 +155,9 @@ public class Main {
 				}
 				
 				canvas.display();
-				System.out.println("right");
-				lastDirection = "right";
+				//System.out.println("right");
+				lastDirection = 2;
 			}
-			
 		});
 		am.put("moveleft", new AbstractAction(){
 			@Override
@@ -153,29 +170,27 @@ public class Main {
 				}
 				
 				canvas.display();
-				System.out.println("left");
-				lastDirection = "left";
+				//System.out.println("left");
+				lastDirection = 3;
 			}
-			
 		});
 		am.put("breakWall", new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("x");
+				//System.out.println("x");
 				if(player.getMana()>=3)
 				{
-					if(lastDirection.equals("up")) Map.breakWall(0, 1, player.getPosition());
-					if(lastDirection.equals("down")) Map.breakWall(0, -1, player.getPosition());
-					if(lastDirection.equals("right")) Map.breakWall(1, 0, player.getPosition());
-					if(lastDirection.equals("left")) Map.breakWall(-1, 0, player.getPosition());
+					if(lastDirection == 0) Map.breakWall(0, 1, player.getPosition());
+					if(lastDirection == 1) Map.breakWall(0, -1, player.getPosition());
+					if(lastDirection == 2) Map.breakWall(1, 0, player.getPosition());
+					if(lastDirection == 3) Map.breakWall(-1, 0, player.getPosition());
 					player.changeManaBy(-3);
 					canvas.display();
 				}
 			}
 			
 		});
-		
 		am.put("reset", new AbstractAction() {
 
 			@Override
@@ -184,9 +199,8 @@ public class Main {
 				timer.cancel();
 				if(player.getPosition().equals(Map.end_point))
 				{
-					Map.generate(canvas, 1000);
 					EntityRegistry.clearEntities();
-					EntityRegistry.createEntities();
+					Map.generate(canvas, 1000);
 					player.getPosition().setX(Map.spawn_point.getX());
 					player.getPosition().setY(Map.spawn_point.getY());
 					canvas.display();
@@ -195,6 +209,19 @@ public class Main {
 			}
 			
 		});
+		am.put("slash", new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Main.player.slash(lastDirection);
+			}
+			
+		});
+		
+		am.put("fireballup", new PlayerProjectileAction(canvas, player, 0));
+		am.put("fireballdown", new PlayerProjectileAction(canvas, player, 1));
+		am.put("fireballleft", new PlayerProjectileAction(canvas, player, 3));
+		am.put("fireballright", new PlayerProjectileAction(canvas, player, 2));
 	}
 
 }

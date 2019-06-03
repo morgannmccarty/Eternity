@@ -25,6 +25,15 @@ public class EntityRegistry {
 	public static void createMonsters(int monsterCount)
 	{
 		List<Position> badPos = new ArrayList<Position>();
+		badPos.add(new Position(Map.spawn_point.getX()+1, Map.spawn_point.getY()+1));
+		badPos.add(new Position(Map.spawn_point.getX()-1, Map.spawn_point.getY()+1));
+		badPos.add(new Position(Map.spawn_point.getX()+1, Map.spawn_point.getY()-1));
+		badPos.add(new Position(Map.spawn_point.getX()-1, Map.spawn_point.getY()-1));
+		badPos.add(new Position(Map.spawn_point.getX()-1, Map.spawn_point.getY()));
+		badPos.add(new Position(Map.spawn_point.getX()+1, Map.spawn_point.getY()));
+		badPos.add(new Position(Map.spawn_point.getX(), Map.spawn_point.getY()-1));
+		badPos.add(new Position(Map.spawn_point.getX(), Map.spawn_point.getY()+1));
+		
 		for(int i = 0; i<Map.tiles.length; ++i)
 		{
 			for(int j = 0; j<Map.tiles[i].length; ++j)
@@ -40,18 +49,19 @@ public class EntityRegistry {
 		for(int i = 0; i<monsterCount; ++i)
 		{
 			Random rand = new Random();
-			int x = rand.nextInt((int)Library.MAX_POSITION.getX() - 2) + 2;
-			int y = rand.nextInt((int)Library.MAX_POSITION.getY() - 2) + 2;
+			int x = rand.nextInt((int)Library.MAX_POSITION.getX() - 3) + 2;
+			int y = rand.nextInt((int)Library.MAX_POSITION.getY() - 3) + 2;
 			for(Position pos: badPos)
 			{
 				while((new Position(x, y)).equals(pos))
 				{
-					x = rand.nextInt((int)Library.MAX_POSITION.getX() - 2) + 2;
-					y = rand.nextInt((int)Library.MAX_POSITION.getY() - 2) + 2;
+					x = rand.nextInt((int)Library.MAX_POSITION.getX() - 3) + 2;
+					y = rand.nextInt((int)Library.MAX_POSITION.getY() - 3) + 2;
 				}
 			}
-			int type = rand.nextInt(1);
+			int type = rand.nextInt(2);
 			if(type == 0) entities.add(new EntityRogue(new Position(x, y)));
+			if(type == 1) entities.add(new EntityMage(new Position(x, y)));
 		}
 		
 	}
@@ -63,6 +73,7 @@ public class EntityRegistry {
 			if(!(entities.get(i) instanceof EntityPlayer))
 			{
 				entities.remove(i);
+				i--;
 			}
 		}
 	}
@@ -86,12 +97,43 @@ public class EntityRegistry {
 		}
 	}
 	
+	public static void entityAttacks()
+	{
+		Random rand = new Random();
+		int r = rand.nextInt(entities.size());
+		if(entities.get(r) instanceof EntityMage) ((EntityMage)(entities.get(r))).fireFireball();
+	}
+	
+	public static void removeEntity(IEntity entity)
+	{
+		entities.remove(entity);
+	}
+	
+	public static void tickEntities()
+	{
+		for(int i = 0; i<entities.size(); ++i)
+		{
+			entities.get(i).onTick();
+		}
+	}
+	
 	public static void drawEntities(GLAutoDrawable drawable)
 	{
 		entities.add(player);
-		for(IEntity entity: entities)
+		for(int i = 0; i<entities.size(); ++i)
 		{
-			entity.display(drawable);
+			entities.get(i).display(drawable);
 		}
 	}
+	
+	public static List<IEntity> getEntitiesAtPos(Position pos)
+	{
+		List<IEntity> ret = new ArrayList<IEntity>();
+		for(int i = 0; i<entities.size(); ++i)
+		{
+			if(pos.equals(entities.get(i).getPosition())) ret.add(entities.get(i));
+		}
+		return ret;
+	}
+	
 }

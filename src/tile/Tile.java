@@ -56,6 +56,11 @@ public class Tile implements IPositionable, ITypeable
 		gl.glEnd();
 	}
 
+	public boolean isSafe()
+	{
+		return false;
+	}
+	
 	@Override
 	public Position getPosition() {
 		return pos;
